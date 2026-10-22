@@ -1,56 +1,39 @@
-// src/data/countries-demo.ts
 import type { Country } from '../types/country';
 
-export const paisUno: Country = {
-    names: { common: 'El Salvador' },
-    flag: {
-        url: 'https://flagcdn.com/sv.svg',
-        alt: 'Bandera de El Salvador',
-        description: 'Bandera oficial de El Salvador',
-    },
-    population: 6314000,
-    region: 'Americas',
-    codes: { cca2: 'SV', cca3: 'SLV' },
-    capitals: ['San Salvador'],
+export const japon: Country = {
+    names: { common: 'Japón' },
+    flag: { url: 'https://flagcdn.com/jp.svg', alt: 'Bandera de Japón' },
+    population: 125800000,
+    region: 'Asia',
+    codes: { cca2: 'JP', cca3: 'JPN' },
+    capitals: ['Tokio'],
 };
 
-export const paisDos: Country = {
-    names: { common: 'Guatemala' },
-    flag: {
-        url: 'https://flagcdn.com/gt.svg',
-        alt: 'Bandera de Guatemala',
-        description: 'Bandera oficial de Guatemala',
-    },
-    population: 17610000,
-    region: 'Americas',
-    codes: { cca2: 'GT', cca3: 'GTM' },
-    capitals: ['Ciudad de Guatemala'],
+export const canada: Country = {
+    names: { common: 'Canadá' },
+    flag: { url: 'https://flagcdn.com/ca.svg', alt: 'Bandera de Canadá' },
+    population: 38000000,
+    region: 'América',
+    codes: { cca2: 'CA', cca3: 'CAN' },
+    capitals: ['Ottawa'],
 };
 
-export const paisTres: Country = {
-    names: { common: 'Costa Rica' },
-    flag: {
-        url: 'https://flagcdn.com/cr.svg',
-        alt: 'Bandera de Costa Rica',
-        description: 'Bandera oficial de Costa Rica',
-    },
-    population: 5153000,
-    region: 'Americas',
-    codes: { cca2: 'CR', cca3: 'CRI' },
-    capitals: ['San José'],
+export const francia: Country = {
+    names: { common: 'Francia' },
+    flag: { url: 'https://flagcdn.com/fr.svg', alt: 'Bandera de Francia' },
+    population: 67750000,
+    region: 'Europa',
+    codes: { cca2: 'FR', cca3: 'FRA' },
+    capitals: ['París'],
 };
 
-export const paisCuatro: Country = {
-    names: { common: 'Honduras' },
-    flag: {
-        url: 'https://flagcdn.com/hn.svg',
-        alt: 'Bandera de Honduras',
-        description: 'Bandera oficial de Honduras',
-    },
-    population: 10430000,
-    region: 'Americas',
-    codes: { cca2: 'HN', cca3: 'HND' },
-    capitals: ['Tegucigalpa'],
+export const australia: Country = {
+    names: { common: 'Australia' },
+    flag: { url: 'https://flagcdn.com/au.svg', alt: 'Bandera de Australia' },
+    population: 25600000,
+    region: 'Oceanía',
+    codes: { cca2: 'AU', cca3: 'AUS' },
+    capitals: ['Canberra'],
 };
 
-export const countriesDemo: Country[] = [paisUno, paisDos, paisTres, paisCuatro];
+export const countriesDemo: Country[] = [japon, canada, francia, australia];

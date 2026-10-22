@@ -1,3 +1,4 @@
+// src/components/organisms/CountryGrid.tsx
 import type { JSX } from 'react';
 import type { Country } from '../../types/country';
 import { CountryCard } from '../molecules/CountryCard';
@@ -11,7 +12,7 @@ export function CountryGrid({ countries, onSelect }: CountryGridProps): JSX.Elem
     return (
         <section 
         aria-label="Países de ejemplo" 
-        className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+        className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
         >
         {countries.map((country) => {
             const key = country.codes?.cca2 || country.codes?.cca3 || country.names.common;
