@@ -9,20 +9,18 @@ import type { Country } from './types/country';
 export default function App(): JSX.Element {
   const [isDark, setIsDark] = useState<boolean>(false);
 
-  // 1. Estados locales para el filtro de texto y región
+  // El estado principal se mantiene en el padre (App.tsx)
   const [query, setQuery] = useState<string>('');
   const [region, setRegion] = useState<string>('');
 
-  // 2. Resultado derivado: se recalcula en cada render a partir de la colección original
+  // Resultado derivado calculado en cada render
   const filteredCountries: Country[] = filterCountries(countriesDemo, query, region);
 
-  // Restablecer filtros
   const handleClearFilters = (): void => {
     setQuery('');
     setRegion('');
   };
 
-  // Modo Oscuro
   useEffect(() => {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     if (prefersDark) {
@@ -48,8 +46,14 @@ export default function App(): JSX.Element {
 
   return (
     <div className="min-h-screen bg-[#eef1f6] dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans flex flex-col justify-between transition-colors duration-300">
-      {/* Organismo Header */}
-      <Header>
+      {/* Header que distribuye el estado a los componentes controlados */}
+      <Header
+        query={query}
+        region={region}
+        onQueryChange={setQuery}
+        onRegionChange={setRegion}
+        onClearFilters={handleClearFilters}
+      >
         <nav className="flex items-center space-x-6 text-xs font-medium text-slate-600 dark:text-slate-400">
           <a href="#home" className="text-slate-900 dark:text-white font-bold border-b-2 border-slate-900 dark:border-white pb-0.5">
             Home
@@ -87,7 +91,7 @@ export default function App(): JSX.Element {
       </Header>
 
       {/* Sección Principal */}
-      <main className="max-w-7xl mx-auto px-8 py-4 w-full flex-1">
+      <main className="max-w-7xl mx-auto px-8 py-8 w-full flex-1">
         <section className="mb-8">
           <h2 className="text-3xl font-serif text-slate-900 dark:text-white mb-1">
             Where will you go next?
@@ -95,63 +99,6 @@ export default function App(): JSX.Element {
           <p className="text-xs uppercase tracking-wider text-slate-400 dark:text-slate-500 font-medium">
             Find your country and use the available filters to explore its information.
           </p>
-        </section>
-
-        {/* Buscador y Filtro por Región */}
-        <section className="flex flex-col sm:flex-row gap-4 mb-6">
-          <div className="relative flex-1">
-            <label htmlFor="search-input" className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
-              Buscar por país
-            </label>
-            <div className="relative">
-              <svg
-                className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500 pointer-events-none"
-                fill="none" stroke="currentColor" viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              <input
-                id="search-input"
-                type="search"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Look for..."
-                className="w-full bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 rounded-full py-3 pl-11 pr-4 text-sm outline-none shadow-sm border border-transparent dark:border-slate-800 focus:border-slate-300 dark:focus:border-slate-700 transition-colors"
-              />
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-2 items-end">
-            <div className="w-full sm:w-auto">
-              <label htmlFor="region-select" className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
-                Filtrar por región
-              </label>
-              <select
-                id="region-select"
-                value={region}
-                onChange={(e) => setRegion(e.target.value)}
-                className="w-full sm:w-auto bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 rounded-full py-3 px-6 text-sm outline-none shadow-sm border border-transparent dark:border-slate-800 cursor-pointer"
-              >
-                <option value="">Todas las regiones</option>
-                <option value="Africa">África</option>
-                <option value="Americas">América</option>
-                <option value="Asia">Asia</option>
-                <option value="Europe">Europa</option>
-                <option value="Oceania">Oceanía</option>
-              </select>
-            </div>
-
-            {/* Botón "Limpiar filtros" */}
-            {(query !== '' || region !== '') && (
-              <button
-                type="button"
-                onClick={handleClearFilters}
-                className="px-5 py-3 rounded-full bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold transition-colors cursor-pointer"
-              >
-                Limpiar filtros
-              </button>
-            )}
-          </div>
         </section>
 
         {/* Encabezado y Contador de Resultados */}
@@ -165,7 +112,7 @@ export default function App(): JSX.Element {
             </span>
           </div>
 
-          {/* Renderizado Condicional de la Rejilla */}
+          {/* Rejilla de tarjetas o mensaje cuando no hay resultados */}
           {filteredCountries.length > 0 ? (
             <CountryGrid countries={filteredCountries} onSelect={handleSelect} />
           ) : (
