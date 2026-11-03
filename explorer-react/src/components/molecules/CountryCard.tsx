@@ -1,4 +1,3 @@
-// src/components/molecules/CountryCard.tsx
 import type { JSX } from 'react';
 import type { Country } from '../../types/country';
 import { formatPopulation } from '../../utils/formatPopulation';
@@ -21,7 +20,6 @@ export interface CountryCardProps {
             alt={country.flag.alt || `Bandera de ${country.names.common}`}
             />
             
-            {/* Contenido centrado exacto al diseño */}
             <div className="p-6 text-center">
             <h3 className="text-xl font-bold text-slate-900 mb-4">
                 {country.names.common}
@@ -35,7 +33,6 @@ export interface CountryCardProps {
             </div>
         </div>
 
-        {/* Botón naranja 'Ver más' */}
         <div className="p-6 pt-0 flex justify-center">
             <button
             type="button"

@@ -1,4 +1,3 @@
-// src/components/organisms/CountryGrid.tsx
 import type { JSX } from 'react';
 import type { Country } from '../../types/country';
 import { CountryCard } from '../molecules/CountryCard';

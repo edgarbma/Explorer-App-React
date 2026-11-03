@@ -1,4 +1,3 @@
-// src/types/country.ts
 export interface CountryNames {
     common: string;
     official?: string;

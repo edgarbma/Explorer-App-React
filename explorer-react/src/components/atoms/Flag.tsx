@@ -1,4 +1,3 @@
-// src/components/atoms/Flag.tsx
 import type { JSX } from 'react';
 
 export interface FlagProps {

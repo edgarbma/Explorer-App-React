@@ -1,4 +1,3 @@
-// src/utils/filter.ts
 import type { Country } from '../types/country';
 
 export function filterCountries(
