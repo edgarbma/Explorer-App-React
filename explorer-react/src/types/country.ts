@@ -4,7 +4,8 @@ export interface CountryNames {
 }
 
 export interface CountryFlag {
-    url: string;
+    svg?: string;
+    url?: string;
     alt?: string;
     description?: string;
 }
@@ -12,13 +13,18 @@ export interface CountryFlag {
 export interface CountryCodes {
     cca2?: string;
     cca3?: string;
+    ccn3?: string;
+    cioc?: string;
 }
 
 export interface Country {
+    code?: string;
+    codes?: CountryCodes;
     names: CountryNames;
-    flag: CountryFlag;
+    flags: CountryFlag;
+    flag?: CountryFlag;
     population: number;
     region: string;
-    codes?: CountryCodes;
+    capital?: string | string[];
     capitals?: string[];
 }
