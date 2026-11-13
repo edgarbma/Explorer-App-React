@@ -1,13 +1,13 @@
+// src/components/organisms/CountryGrid.tsx
 import type { JSX } from 'react';
 import { CountryCard } from '../molecules/CountryCard';
 import type { Country } from '../../types/country';
 
 export interface CountryGridProps {
     countries: Country[];
-    onSelect?: (code: string) => void;
 }
 
-export function CountryGrid({ countries, onSelect }: CountryGridProps): JSX.Element {
+export function CountryGrid({ countries }: CountryGridProps): JSX.Element {
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {countries.map((country, index) => {
@@ -17,13 +17,7 @@ export function CountryGrid({ countries, onSelect }: CountryGridProps): JSX.Elem
             country.codes?.cca2 ||
             `${country.names.common}-${index}`;
 
-            return (
-            <CountryCard
-                key={key}
-                country={country}
-                onSelect={onSelect}
-            />
-            );
+            return <CountryCard key={key} country={country} />;
         })}
         </div>
     );
