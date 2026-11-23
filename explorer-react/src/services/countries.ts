@@ -1,30 +1,120 @@
-import type { Country } from '../types/country';
+// src/services/countries.ts
+import { countriesDemo } from '../data/countries-demo';
+import type { CountryDetail } from '../types/country';
 
-const BASE_URL = 'https://restcountries.com/v3.1';
-
-export async function fetchAllCountries(signal?: AbortSignal): Promise<Country[]> {
-    const response = await fetch(`${BASE_URL}/all?fields=name,flags,population,region,capital,cca3`, {
-        signal,
-    });
-
-    if (!response.ok) {
-        throw new Error(`Error en la petición: ${response.status} ${response.statusText}`);
+interface RawCurrency {
+    name: string;
+    symbol?: string;
     }
 
-    const data = await response.json();
+    interface RawNativeName {
+    common: string;
+    official?: string;
+    }
 
-    return data.map((item: any) => ({
-        code: item.cca3 ?? '',
+    interface RawCountryRecord {
+    code?: string;
+    cca2?: string;
+    cca3?: string;
+    codes?: { cca2?: string; cca3?: string };
+    name?: {
+        common: string;
+        official?: string;
+        nativeName?: Record<string, RawNativeName>;
+    };
+    names?: { common: string; official?: string };
+    nativeName?: string;
+    flags?: { svg?: string; url?: string; alt?: string };
+    flag?: { svg?: string; url?: string; alt?: string };
+    population?: number;
+    region?: string;
+    subregion?: string;
+    capital?: string | string[];
+    tld?: string[];
+    currencies?: string[] | Record<string, RawCurrency>;
+    languages?: string[] | Record<string, string>;
+    borders?: string[];
+    }
+
+    export async function fetchCountryByCode(code: string): Promise<CountryDetail> {
+    const normalized = code.trim().toUpperCase();
+
+    try {
+        const response = await fetch('/data/countries.json');
+        if (response.ok) {
+        const data: RawCountryRecord[] = await response.json();
+        const match = data.find((item) => matchesCountryCode(item, normalized));
+        if (match) {
+            return mapToCountryDetail(match);
+        }
+        }
+    } catch {
+        // Fallback controlado hacia los datos locales de demostración
+    }
+
+    const demoMatch = (countriesDemo as RawCountryRecord[]).find((c) =>
+        matchesCountryCode(c, normalized)
+    );
+
+    if (!demoMatch) {
+        throw new Error(`No se encontró ningún país con el código "${code}".`);
+    }
+
+    return mapToCountryDetail(demoMatch);
+    }
+
+    function matchesCountryCode(item: RawCountryRecord, normalizedCode: string): boolean {
+    const candidates = [
+        item.cca2,
+        item.cca3,
+        item.codes?.cca2,
+        item.codes?.cca3,
+        item.code,
+        item.code?.slice(0, 2),
+    ];
+
+    return candidates.some((candidate) => candidate?.toUpperCase() === normalizedCode);
+    }
+
+    function mapToCountryDetail(raw: RawCountryRecord): CountryDetail {
+    const nativeValues = raw.name?.nativeName ? Object.values(raw.name.nativeName) : [];
+    const commonName = raw.names?.common || raw.name?.common || 'Sin nombre';
+    const nativeName = raw.nativeName || nativeValues[0]?.common || commonName;
+
+    const currenciesList = raw.currencies
+        ? Array.isArray(raw.currencies)
+        ? raw.currencies
+        : Object.values(raw.currencies).map((c) => (c.symbol ? `${c.name} (${c.symbol})` : c.name))
+        : [];
+
+    const languagesList = raw.languages
+        ? Array.isArray(raw.languages)
+        ? raw.languages
+        : Object.values(raw.languages)
+        : [];
+
+    return {
+        code: raw.cca2 || raw.codes?.cca2 || raw.code || '',
+        codes: {
+        cca2: raw.cca2 || raw.codes?.cca2 || raw.code?.slice(0, 2),
+        cca3: raw.cca3 || raw.codes?.cca3 || raw.code,
+        },
         names: {
-        common: item.name?.common ?? 'Sin nombre',
-        official: item.name?.official ?? 'Sin nombre oficial',
+        common: commonName,
+        official: raw.names?.official || raw.name?.official,
         },
         flags: {
-        svg: item.flags?.svg ?? item.flags?.png ?? '',
-        alt: item.flags?.alt ?? `Bandera de ${item.name?.common ?? 'país'}`,
+        svg: raw.flags?.svg || raw.flags?.url || raw.flag?.url || '',
+        alt: raw.flags?.alt || raw.flag?.alt || `Bandera de ${commonName}`,
         },
-        population: item.population ?? 0,
-        region: item.region ?? 'Desconocida',
-        capital: Array.isArray(item.capital) && item.capital.length > 0 ? item.capital[0] : 'Sin capital',
-    }));
+        population: raw.population ?? 0,
+        region: raw.region || 'N/A',
+        subregion: raw.subregion || 'N/A',
+        capital: Array.isArray(raw.capital) ? raw.capital[0] : raw.capital || 'N/A',
+        nativeName,
+        tld: raw.tld || [],
+        currencies: currenciesList,
+        languages: languagesList,
+        borders: raw.borders || [],
+    };
 }

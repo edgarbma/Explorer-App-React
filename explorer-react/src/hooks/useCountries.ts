@@ -7,17 +7,14 @@ export interface UseCountriesReturn {
     countries: Country[];
     loading: boolean;
     error: string | null;
-}
+    }
 
-export function useCountries(): UseCountriesReturn {
+    export function useCountries(): UseCountriesReturn {
     const [countries, setCountries] = useState<Country[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         let isMounted = true;
-        setLoading(true);
-        setError(null);
 
         const timer = setTimeout(() => {
         if (isMounted) {
@@ -32,5 +29,5 @@ export function useCountries(): UseCountriesReturn {
         };
     }, []);
 
-    return { countries, loading, error };
+    return { countries, loading, error: null };
 }

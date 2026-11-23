@@ -1,4 +1,3 @@
-// src/components/molecules/CountryCard.tsx
 import type { JSX } from 'react';
 import { Link } from 'react-router-dom';
 import type { Country } from '../../types/country';
@@ -21,7 +20,7 @@ export interface CountryCardProps {
         to={`/country/${countryCode}`}
         className="group bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-sm border border-slate-200/60 dark:border-slate-800 flex flex-col justify-between hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
         >
-        <div className="relative aspect-[16/10] w-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+        <div className="relative aspect-\[16/10] w-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
             <img
             src={flagUrl}
             alt={flagAlt}

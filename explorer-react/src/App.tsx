@@ -5,25 +5,21 @@ import { HomePage } from './pages/HomePage';
 import { CountryDetailPage } from './pages/CountryDetailPage';
 
 export default function App(): JSX.Element {
-  const [isDark, setIsDark] = useState<boolean>(false);
+  const [isDark, setIsDark] = useState<boolean>(() =>
+    window.matchMedia('(prefers-color-scheme: dark)').matches
+  );
 
   useEffect(() => {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (prefersDark) {
-      setIsDark(true);
-      document.documentElement.classList.add('dark');
-    }
-  }, []);
-
-  const toggleDarkMode = (): void => {
     const root = document.documentElement;
     if (isDark) {
-      root.classList.remove('dark');
-      setIsDark(false);
-    } else {
       root.classList.add('dark');
-      setIsDark(true);
+    } else {
+      root.classList.remove('dark');
     }
+  }, [isDark]);
+
+  const toggleDarkMode = (): void => {
+    setIsDark((prev) => !prev);
   };
 
   const navigationBar = (
@@ -53,31 +49,36 @@ export default function App(): JSX.Element {
   );
 
   return (
-    <div className="min-h-screen bg-[#eef1f6] dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans flex flex-col justify-between transition-colors duration-300">
-      <Routes>
-        <Route path="/" element={<HomePage navigation={navigationBar} />} />
-        <Route path="/country/:code" element={<CountryDetailPage navigation={navigationBar} />} />
-      </Routes>
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <div className="min-h-screen bg-[#eef1f6] dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans flex flex-col justify-between transition-colors duration-300">
+            <HomePage navigation={navigationBar} />
 
-      <footer className="px-8 py-6 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 dark:text-slate-400 gap-4">
-        <div>
-          <p className="text-lg font-bold text-slate-900 dark:text-white">Explorer App</p>
-          <p className="text-[11px] text-slate-400 dark:text-slate-500">
-            © 2026 Explorer App. Data provided by REST Countries.
-          </p>
-        </div>
-        <div className="flex space-x-6 text-slate-600 dark:text-slate-400 font-medium">
-          <Link to="/" className="hover:text-slate-900 dark:hover:text-white transition-colors">
-            Documentation
-          </Link>
-          <Link to="/" className="hover:text-slate-900 dark:hover:text-white transition-colors">
-            Source Code
-          </Link>
-          <Link to="/" className="hover:text-slate-900 dark:hover:text-white transition-colors">
-            Privacy
-          </Link>
-        </div>
-      </footer>
-    </div>
+            <footer className="px-8 py-6 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 dark:text-slate-400 gap-4">
+              <div>
+                <p className="text-lg font-bold text-slate-900 dark:text-white">Explorer App</p>
+                <p className="text-[11px] text-slate-400 dark:text-slate-500">
+                  © 2026 Explorer App. Data provided by REST Countries.
+                </p>
+              </div>
+              <div className="flex space-x-6 text-slate-600 dark:text-slate-400 font-medium">
+                <Link to="/" className="hover:text-slate-900 dark:hover:text-white transition-colors">
+                  Documentation
+                </Link>
+                <Link to="/" className="hover:text-slate-900 dark:hover:text-white transition-colors">
+                  Source Code
+                </Link>
+                <Link to="/" className="hover:text-slate-900 dark:hover:text-white transition-colors">
+                  Privacy
+                </Link>
+              </div>
+            </footer>
+          </div>
+        }
+      />
+      <Route path="/country/:code" element={<CountryDetailPage />} />
+    </Routes>
   );
 }

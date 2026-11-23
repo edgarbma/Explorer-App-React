@@ -28,3 +28,12 @@ export interface Country {
     capital?: string | string[];
     capitals?: string[];
 }
+
+export interface CountryDetail extends Country {
+    nativeName?: string;
+    subregion?: string;
+    tld?: string[];
+    currencies?: string[];
+    languages?: string[];
+    borders?: string[];
+}

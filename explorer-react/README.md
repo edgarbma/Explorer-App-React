@@ -1,20 +1,27 @@
-# Explorer App - React
-Migración de version Vanilla a React y Tailwinds CSS v4.
+Migración de la versión Vanilla TypeScript de **Explorer App** a **React 18 + TypeScript + Tailwind CSS v4**, organizada bajo arquitectura **Atomic Design**, **Custom Hooks tipados** y navegación SPA con **React Router v6**.
 
-# Clonar repositorio
-```bash
-git clone [https://github.com/edgarbma/Explorer-App-React.git](https://github.com/edgarbma/Explorer-App-React.git)
+🔗 **Aplicación desplegada en Vercel:** [https://explorer-app-react.vercel.app](https://explorer-app-react.vercel.app) *(reemplaza con tu URL real)*
 
-# React + TypeScript + Vite
-# Verificación de node y paqueteria pnpm
-node -v (recomendado v22.12.0 o superior)
-pnpm -v (recomendado v9.0.0 o superior)
+---
 
-# Instalación de paquetes
-pnpm create vite explorer-react --template react-ts
-pnpm install
-pnpm add react@18 react-dom@18
-pnpm add -D @types/react@18 @types/react-dom@18
-pnpm add -D tailwindcss@4 @tailwindcss/vite@4
-pnpm list react react-dom @types/react @types/react-dom
-pnpm run dev
+## 🛠️ Stack Tecnológico
+
+- **Librería UI:** React 18 + TypeScript
+- **Enrutamiento:** React Router v6 (`BrowserRouter`, `Routes`, `Route`, `useParams`, `useNavigate`)
+- **Estilos:** Tailwind CSS v4 (`@tailwindcss/vite`)
+- **Entorno y Gestor de Paquetes:** Vite + pnpm
+
+---
+
+## 🚀 Requisitos e Instalación Local
+
+### Requisitos previos
+- **Node.js:** `v22.12.0` o superior (`node -v`)
+- **pnpm:** `v9.0.0` o superior (`pnpm -v`)
+
+### Pasos para ejecutar el proyecto
+
+1. **Clonar el repositorio y entrar al directorio del proyecto:**
+   ```bash
+   git clone https://github.com/edgarbma/Explorer-App-React.git
+   cd Explorer-App-React/explorer-react

@@ -1,93 +1,164 @@
 // src/pages/CountryDetailPage.tsx
-import type { JSX, ReactNode } from 'react';
+import type { JSX } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useCountries } from '../hooks/useCountries';
+import { useCountryDetail } from '../hooks/useCountryDetail';
+import { toAlpha2Code } from '../utils/country-codes';
 
-export interface CountryDetailPageProps {
-    navigation: ReactNode;
-    }
-
-    export function CountryDetailPage({ navigation }: CountryDetailPageProps): JSX.Element {
+export function CountryDetailPage(): JSX.Element {
     const { code } = useParams<{ code: string }>();
     const navigate = useNavigate();
-    const { countries, loading } = useCountries();
+    const { country, loading, error, retry } = useCountryDetail(code);
 
-    const selectedCountry = countries.find(
-        (c) =>
-        c.code?.toLowerCase() === code?.toLowerCase() ||
-        c.codes?.cca3?.toLowerCase() === code?.toLowerCase()
-    );
+    const capitalText = Array.isArray(country?.capital)
+        ? country.capital.join(', ')
+        : country?.capital || 'N/A';
 
     return (
-        <>
-        <header className="px-6 py-4 sm:px-8 sm:py-6 border-b border-slate-200/50 dark:border-slate-800/50 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
-            <div className="flex items-center justify-between max-w-7xl mx-auto">
-            <Link
-                to="/"
-                className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight"
-            >
-                Booking or browsing?
-            </Link>
-            {navigation}
-            </div>
-        </header>
-
-        <main className="max-w-4xl mx-auto px-8 py-12 w-full flex-1">
-            <div className="mb-8 flex items-center gap-4">
+        <div className="min-h-screen flex flex-col justify-between bg-[#f4f6f9] dark:bg-slate-950 text-slate-800 dark:text-slate-100">
+        <main className="max-w-6xl mx-auto w-full px-6 sm:px-10 py-10 flex-1">
+            <div className="mb-10">
             <button
                 type="button"
                 onClick={() => navigate(-1)}
-                className="px-5 py-2.5 rounded-full bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 text-xs font-semibold shadow-sm border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#f59e42] hover:bg-[#e58d30] text-slate-900 font-semibold text-xs shadow-sm transition-colors cursor-pointer"
             >
-                ← Volver atrás
+                <span>←</span>
+                <span>Atrás</span>
             </button>
-
-            <Link
-                to="/"
-                className="text-xs font-medium text-orange-600 dark:text-orange-400 hover:underline"
-            >
-                Ir al inicio
-            </Link>
             </div>
 
-            <div className="p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-            <span className="inline-block px-3 py-1 rounded-full bg-orange-100 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 text-xs font-bold mb-4">
-                Ruta dinámica: /country/{code}
-            </span>
-
-            {loading ? (
+            {loading && (
+            <div className="flex flex-col items-center justify-center py-20">
+                <div className="w-10 h-10 border-4 border-slate-300 border-t-[#f59e42] rounded-full animate-spin mb-4" />
                 <p className="text-sm text-slate-500">Cargando información del país...</p>
-            ) : selectedCountry ? (
-                <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
-                <img
-                    src={selectedCountry.flags?.svg || selectedCountry.flags?.url || ''}
-                    alt={selectedCountry.flags?.alt || selectedCountry.names.common}
-                    className="w-40 h-28 object-cover rounded-xl border border-slate-200 dark:border-slate-700"
-                />
-                <div>
-                    <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
-                    {selectedCountry.names.common}
-                    </h1>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
-                    Código identificador recibido por URL: <strong>{code?.toUpperCase()}</strong>
-                    </p>
-                    <p className="text-xs text-slate-400 mt-2">
-                    Vista inicial de detalle lista para ampliar sus datos en la siguiente sesión.
-                    </p>
-                </div>
-                </div>
-            ) : (
-                <div>
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
-                    País no encontrado ({code})
-                </h1>
-                <p className="text-sm text-slate-500">
-                    No se encontró ningún registro que coincida con el código indicado en la URL.
-                </p>
-                </div>
-            )}
             </div>
+            )}
+
+            {!loading && error && (
+            <div className="max-w-lg mx-auto p-8 rounded-2xl bg-white dark:bg-slate-900 border border-red-200 dark:border-red-900 text-center shadow-sm">
+                <h2 className="text-lg font-bold text-red-600 dark:text-red-400 mb-2">
+                No se pudo mostrar el país
+                </h2>
+                <p className="text-xs text-slate-500 mb-6">{error}</p>
+                <div className="flex justify-center gap-3">
+                <button
+                    type="button"
+                    onClick={retry}
+                    className="px-5 py-2 rounded-full bg-[#f59e42] text-slate-900 text-xs font-semibold cursor-pointer"
+                >
+                    Reintentar
+                </button>
+                <Link
+                    to="/"
+                    className="px-5 py-2 rounded-full bg-slate-200 dark:bg-slate-800 text-xs font-semibold"
+                >
+                    Ir al inicio
+                </Link>
+                </div>
+            </div>
+            )}
+
+            {!loading && !error && country && (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+                <div className="lg:col-span-5">
+                <div className="rounded-xl overflow-hidden shadow-md bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800">
+                    <img
+                    src={country.flags?.svg || country.flags?.url || ''}
+                    alt={country.flags?.alt || `Bandera de ${country.names.common}`}
+                    className="w-full h-auto object-cover aspect-[16/10]"
+                    />
+                </div>
+                </div>
+
+                <div className="lg:col-span-7">
+                <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-6">
+                    {country.names.common}
+                </h1>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2.5 text-sm text-slate-700 dark:text-slate-300 mb-8">
+                    <div className="space-y-2.5">
+                    <p>
+                        <span className="font-semibold text-slate-900 dark:text-white">Nombre nativo:</span>{' '}
+                        {country.nativeName || country.names.common}
+                    </p>
+                    <p>
+                        <span className="font-semibold text-slate-900 dark:text-white">Población:</span>{' '}
+                        {country.population.toLocaleString()}
+                    </p>
+                    <p>
+                        <span className="font-semibold text-slate-900 dark:text-white">Región:</span>{' '}
+                        {country.region}
+                    </p>
+                    <p>
+                        <span className="font-semibold text-slate-900 dark:text-white">Subregión:</span>{' '}
+                        {country.subregion || 'N/A'}
+                    </p>
+                    <p>
+                        <span className="font-semibold text-slate-900 dark:text-white">Capital:</span>{' '}
+                        {capitalText}
+                    </p>
+                    </div>
+
+                    <div className="space-y-2.5">
+                    <p>
+                        <span className="font-semibold text-slate-900 dark:text-white">Dominio:</span>{' '}
+                        {country.tld && country.tld.length > 0 ? country.tld.join(', ') : 'N/A'}
+                    </p>
+                    <p>
+                        <span className="font-semibold text-slate-900 dark:text-white">Moneda:</span>{' '}
+                        {country.currencies && country.currencies.length > 0
+                        ? country.currencies.join(', ')
+                        : 'N/A'}
+                    </p>
+                    <p>
+                        <span className="font-semibold text-slate-900 dark:text-white">Idiomas:</span>{' '}
+                        {country.languages && country.languages.length > 0
+                        ? country.languages.join(', ')
+                        : 'N/A'}
+                    </p>
+                    </div>
+                </div>
+
+                <div>
+                    <p className="text-sm font-semibold text-slate-900 dark:text-white mb-3">
+                    Países fronterizos:
+                    </p>
+                    {country.borders && country.borders.length > 0 ? (
+                    <div className="flex flex-wrap gap-2.5">
+                        {country.borders.map((borderCode) => {
+                        const targetAlpha2 = toAlpha2Code(borderCode);
+                        return (
+                            <Link
+                            key={borderCode}
+                            to={`/country/${targetAlpha2}`}
+                            className="px-4 py-1.5 rounded-lg bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 text-xs font-medium shadow-sm border border-slate-200/80 dark:border-slate-800 hover:border-[#f59e42] hover:text-[#d97706] transition-colors"
+                            >
+                            {borderCode}
+                            </Link>
+                        );
+                        })}
+                    </div>
+                    ) : (
+                    <p className="text-xs text-slate-400">
+                        Este país no tiene fronteras terrestres registradas.
+                    </p>
+                    )}
+                </div>
+                </div>
+            </div>
+            )}
         </main>
-        </>
+
+        <footer className="bg-[#2c4a87] text-white px-8 py-6 mt-12">
+            <div className="max-w-6xl mx-auto">
+            <Link to="/" className="text-base font-bold tracking-tight hover:underline">
+                Explorer App
+            </Link>
+            <p className="text-[11px] text-blue-200 mt-1">
+                © 2026 Explorer App. Datos proporcionados por REST Countries.
+            </p>
+            </div>
+        </footer>
+        </div>
     );
-    }
+}
